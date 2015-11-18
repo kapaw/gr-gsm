@@ -29,6 +29,7 @@
 #include "grgsm/misc_utils/extract_immediate_assignment.h"
 #include "grgsm/misc_utils/message_printer.h"
 #include "grgsm/misc_utils/tmsi_dumper.h"
+#include "grgsm/misc_utils/tmsi_printer.h"
 #include "grgsm/misc_utils/burst_file_sink.h"
 #include "grgsm/misc_utils/burst_file_source.h"
 #include "grgsm/qa_utils/burst_sink.h"
@@ -88,6 +89,8 @@ GR_SWIG_BLOCK_MAGIC2(gsm, controlled_rotator_cc);
 GR_SWIG_BLOCK_MAGIC2(gsm, controlled_const_source_f);
 %include "grgsm/misc_utils/message_printer.h"
 GR_SWIG_BLOCK_MAGIC2(gsm, message_printer);
+%include "grgsm/misc_utils/tmsi_printer.h"
+GR_SWIG_BLOCK_MAGIC2(gsm, tmsi_printer);
 %include "grgsm/misc_utils/tmsi_dumper.h"
 GR_SWIG_BLOCK_MAGIC2(gsm, tmsi_dumper);
 %include "grgsm/misc_utils/message_file_sink.h"

@@ -56,6 +56,7 @@ list(APPEND grgsm_sources
     misc_utils/controlled_const_source_f_impl.cc
     misc_utils/message_printer_impl.cc
     misc_utils/tmsi_dumper_impl.cc
+    misc_utils/tmsi_printer_impl.cc
     misc_utils/burst_file_sink_impl.cc
     misc_utils/burst_file_source_impl.cc
     misc_utils/message_file_sink_impl.cc

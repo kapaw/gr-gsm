@@ -61,6 +61,7 @@
       <block>gsm_message_printer</block>
       <block>gsm_clock_offset_corrector</block>
       <block>gsm_tmsi_dumper</block>
+      <block>gsm_tmsi_printer</block>
     </cat>
   </cat>
 </cat>

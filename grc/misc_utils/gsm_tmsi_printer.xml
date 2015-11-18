@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<block>
+  <name>TMSI Printer</name>
+  <key>gsm_tmsi_printer</key>
+  <import>import grgsm</import>
+  <import>import pmt</import>
+  <make>grgsm.tmsi_printer()</make>
+
+  <sink>
+    <name>msgs</name>
+    <type>message</type>
+  </sink>
+</block>

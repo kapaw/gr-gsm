@@ -26,6 +26,7 @@ install(FILES
     gsm_bursts_printer.xml
     gsm_clock_offset_corrector.xml
     gsm_tmsi_dumper.xml
+    gsm_tmsi_printer.xml
     gsm_burst_file_sink.xml
     gsm_burst_file_source.xml
     gsm_message_file_sink.xml
