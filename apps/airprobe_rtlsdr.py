@@ -2,10 +2,11 @@
 ##################################################
 # Gnuradio Python Flow Graph
 # Title: Airprobe Rtlsdr
-# Generated: Wed Nov 18 11:40:28 2015
+# Generated: Wed Nov 18 12:08:16 2015
 ##################################################
 
 from PyQt4 import Qt
+from PyQt4.QtCore import QObject, pyqtSlot
 from gnuradio import blocks
 from gnuradio import eng_notation
 from gnuradio import gr
@@ -14,6 +15,7 @@ from gnuradio.eng_option import eng_option
 from gnuradio.filter import firdes
 from math import pi
 from optparse import OptionParser
+import PyQt4.Qwt5 as Qwt
 import grgsm
 import osmosdr
 import pmt
@@ -57,16 +59,78 @@ class airprobe_rtlsdr(gr.top_block, Qt.QWidget):
         self.fc = fc
 
         ##################################################
+        # Variables
+        ##################################################
+        self.ppm_slider = ppm_slider = ppm
+        self.g_slider = g_slider = gain
+        self.fc_slider = fc_slider = fc
+
+        ##################################################
         # Blocks
         ##################################################
+        self._ppm_slider_layout = Qt.QHBoxLayout()
+        self._ppm_slider_layout.addWidget(Qt.QLabel("PPM Offset"+": "))
+        class qwt_counter_pyslot(Qwt.QwtCounter):
+            def __init__(self, parent=None):
+                Qwt.QwtCounter.__init__(self, parent)
+            @pyqtSlot('double')
+            def setValue(self, value):
+                super(Qwt.QwtCounter, self).setValue(value)
+        self._ppm_slider_counter = qwt_counter_pyslot()
+        self._ppm_slider_counter.setRange(-150, 150, 1)
+        self._ppm_slider_counter.setNumButtons(2)
+        self._ppm_slider_counter.setMinimumWidth(100)
+        self._ppm_slider_counter.setValue(self.ppm_slider)
+        self._ppm_slider_layout.addWidget(self._ppm_slider_counter)
+        self._ppm_slider_counter.valueChanged.connect(self.set_ppm_slider)
+        self.top_layout.addLayout(self._ppm_slider_layout)
+        self._g_slider_layout = Qt.QHBoxLayout()
+        self._g_slider_layout.addWidget(Qt.QLabel("Gain"+": "))
+        class qwt_counter_pyslot(Qwt.QwtCounter):
+            def __init__(self, parent=None):
+                Qwt.QwtCounter.__init__(self, parent)
+            @pyqtSlot('double')
+            def setValue(self, value):
+                super(Qwt.QwtCounter, self).setValue(value)
+        self._g_slider_counter = qwt_counter_pyslot()
+        self._g_slider_counter.setRange(0, 50, 0.5)
+        self._g_slider_counter.setNumButtons(2)
+        self._g_slider_counter.setMinimumWidth(100)
+        self._g_slider_counter.setValue(self.g_slider)
+        self._g_slider_layout.addWidget(self._g_slider_counter)
+        self._g_slider_counter.valueChanged.connect(self.set_g_slider)
+        self.top_layout.addLayout(self._g_slider_layout)
+        self._fc_slider_layout = Qt.QVBoxLayout()
+        self._fc_slider_tool_bar = Qt.QToolBar(self)
+        self._fc_slider_layout.addWidget(self._fc_slider_tool_bar)
+        self._fc_slider_tool_bar.addWidget(Qt.QLabel("Frequency"+": "))
+        class qwt_counter_pyslot(Qwt.QwtCounter):
+            def __init__(self, parent=None):
+                Qwt.QwtCounter.__init__(self, parent)
+            @pyqtSlot('double')
+            def setValue(self, value):
+                super(Qwt.QwtCounter, self).setValue(value)
+        self._fc_slider_counter = qwt_counter_pyslot()
+        self._fc_slider_counter.setRange(925e6, 1990e6, 2e5)
+        self._fc_slider_counter.setNumButtons(2)
+        self._fc_slider_counter.setValue(self.fc_slider)
+        self._fc_slider_tool_bar.addWidget(self._fc_slider_counter)
+        self._fc_slider_counter.valueChanged.connect(self.set_fc_slider)
+        self._fc_slider_slider = Qwt.QwtSlider(None, Qt.Qt.Horizontal, Qwt.QwtSlider.BottomScale, Qwt.QwtSlider.BgSlot)
+        self._fc_slider_slider.setRange(925e6, 1990e6, 2e5)
+        self._fc_slider_slider.setValue(self.fc_slider)
+        self._fc_slider_slider.setMinimumWidth(100)
+        self._fc_slider_slider.valueChanged.connect(self.set_fc_slider)
+        self._fc_slider_layout.addWidget(self._fc_slider_slider)
+        self.top_layout.addLayout(self._fc_slider_layout)
         self.rtlsdr_source_0 = osmosdr.source( args="numchan=" + str(1) + " " + "" )
         self.rtlsdr_source_0.set_sample_rate(samp_rate)
-        self.rtlsdr_source_0.set_center_freq(fc-shiftoff, 0)
-        self.rtlsdr_source_0.set_freq_corr(ppm, 0)
+        self.rtlsdr_source_0.set_center_freq(fc_slider-shiftoff, 0)
+        self.rtlsdr_source_0.set_freq_corr(ppm_slider, 0)
         self.rtlsdr_source_0.set_dc_offset_mode(2, 0)
         self.rtlsdr_source_0.set_iq_balance_mode(2, 0)
         self.rtlsdr_source_0.set_gain_mode(False, 0)
-        self.rtlsdr_source_0.set_gain(gain, 0)
+        self.rtlsdr_source_0.set_gain(g_slider, 0)
         self.rtlsdr_source_0.set_if_gain(20, 0)
         self.rtlsdr_source_0.set_bb_gain(20, 0)
         self.rtlsdr_source_0.set_antenna("", 0)
@@ -75,7 +139,7 @@ class airprobe_rtlsdr(gr.top_block, Qt.QWidget):
         self.qtgui_freq_sink_x_0 = qtgui.freq_sink_c(
         	1024, #size
         	firdes.WIN_BLACKMAN_hARRIS, #wintype
-        	fc, #fc
+        	fc_slider, #fc
         	samp_rate, #bw
         	"", #name
         	1 #number of inputs
@@ -157,14 +221,14 @@ class airprobe_rtlsdr(gr.top_block, Qt.QWidget):
 
     def set_gain(self, gain):
         self.gain = gain
-        self.rtlsdr_source_0.set_gain(self.gain, 0)
+        self.set_g_slider(self.gain)
 
     def get_ppm(self):
         return self.ppm
 
     def set_ppm(self, ppm):
         self.ppm = ppm
-        self.rtlsdr_source_0.set_freq_corr(self.ppm, 0)
+        self.set_ppm_slider(self.ppm)
 
     def get_samp_rate(self):
         return self.samp_rate
@@ -173,7 +237,7 @@ class airprobe_rtlsdr(gr.top_block, Qt.QWidget):
         self.samp_rate = samp_rate
         self.blocks_rotator_cc_0.set_phase_inc(-2*pi*self.shiftoff/self.samp_rate)
         self.gsm_input_0.set_samp_rate_in(self.samp_rate)
-        self.qtgui_freq_sink_x_0.set_frequency_range(self.fc, self.samp_rate)
+        self.qtgui_freq_sink_x_0.set_frequency_range(self.fc_slider, self.samp_rate)
         self.rtlsdr_source_0.set_sample_rate(self.samp_rate)
 
     def get_shiftoff(self):
@@ -182,7 +246,7 @@ class airprobe_rtlsdr(gr.top_block, Qt.QWidget):
     def set_shiftoff(self, shiftoff):
         self.shiftoff = shiftoff
         self.blocks_rotator_cc_0.set_phase_inc(-2*pi*self.shiftoff/self.samp_rate)
-        self.rtlsdr_source_0.set_center_freq(self.fc-self.shiftoff, 0)
+        self.rtlsdr_source_0.set_center_freq(self.fc_slider-self.shiftoff, 0)
         self.rtlsdr_source_0.set_bandwidth(250e3+abs(self.shiftoff), 0)
 
     def get_fc(self):
@@ -191,8 +255,33 @@ class airprobe_rtlsdr(gr.top_block, Qt.QWidget):
     def set_fc(self, fc):
         self.fc = fc
         self.gsm_input_0.set_fc(self.fc)
-        self.qtgui_freq_sink_x_0.set_frequency_range(self.fc, self.samp_rate)
-        self.rtlsdr_source_0.set_center_freq(self.fc-self.shiftoff, 0)
+        self.set_fc_slider(self.fc)
+
+    def get_ppm_slider(self):
+        return self.ppm_slider
+
+    def set_ppm_slider(self, ppm_slider):
+        self.ppm_slider = ppm_slider
+        Qt.QMetaObject.invokeMethod(self._ppm_slider_counter, "setValue", Qt.Q_ARG("double", self.ppm_slider))
+        self.rtlsdr_source_0.set_freq_corr(self.ppm_slider, 0)
+
+    def get_g_slider(self):
+        return self.g_slider
+
+    def set_g_slider(self, g_slider):
+        self.g_slider = g_slider
+        Qt.QMetaObject.invokeMethod(self._g_slider_counter, "setValue", Qt.Q_ARG("double", self.g_slider))
+        self.rtlsdr_source_0.set_gain(self.g_slider, 0)
+
+    def get_fc_slider(self):
+        return self.fc_slider
+
+    def set_fc_slider(self, fc_slider):
+        self.fc_slider = fc_slider
+        self.qtgui_freq_sink_x_0.set_frequency_range(self.fc_slider, self.samp_rate)
+        self.rtlsdr_source_0.set_center_freq(self.fc_slider-self.shiftoff, 0)
+        Qt.QMetaObject.invokeMethod(self._fc_slider_counter, "setValue", Qt.Q_ARG("double", self.fc_slider))
+        Qt.QMetaObject.invokeMethod(self._fc_slider_slider, "setValue", Qt.Q_ARG("double", self.fc_slider))
 
 if __name__ == '__main__':
     import ctypes
