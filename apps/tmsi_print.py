@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 ##################################################
 # Gnuradio Python Flow Graph
-# Title: Tmsi Print Qt
-# Generated: Wed Nov 18 11:31:32 2015
+# Title: Tmsi Print
+# Generated: Wed Nov 18 11:58:00 2015
 ##################################################
 
 from PyQt4 import Qt
@@ -23,12 +23,12 @@ import sip
 import sys
 
 from distutils.version import StrictVersion
-class tmsi_print_qt(gr.top_block, Qt.QWidget):
+class tmsi_print(gr.top_block, Qt.QWidget):
 
     def __init__(self, gain=30, ppm=0, samp_rate=2000000.052982, shiftoff=400e3, fc=943.6e6):
-        gr.top_block.__init__(self, "Tmsi Print Qt")
+        gr.top_block.__init__(self, "Tmsi Print")
         Qt.QWidget.__init__(self)
-        self.setWindowTitle("Tmsi Print Qt")
+        self.setWindowTitle("Tmsi Print")
         try:
              self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
         except:
@@ -45,7 +45,7 @@ class tmsi_print_qt(gr.top_block, Qt.QWidget):
         self.top_grid_layout = Qt.QGridLayout()
         self.top_layout.addLayout(self.top_grid_layout)
 
-        self.settings = Qt.QSettings("GNU Radio", "tmsi_print_qt")
+        self.settings = Qt.QSettings("GNU Radio", "tmsi_print")
         self.restoreGeometry(self.settings.value("geometry").toByteArray())
 
 
@@ -200,7 +200,7 @@ class tmsi_print_qt(gr.top_block, Qt.QWidget):
         self.msg_connect(self.gsm_control_channels_decoder_0, "msgs", self.gsm_tmsi_printer_0, "msgs")
 
     def closeEvent(self, event):
-        self.settings = Qt.QSettings("GNU Radio", "tmsi_print_qt")
+        self.settings = Qt.QSettings("GNU Radio", "tmsi_print")
         self.settings.setValue("geometry", self.saveGeometry())
         event.accept()
 
@@ -295,7 +295,7 @@ if __name__ == '__main__':
     if(StrictVersion(Qt.qVersion()) >= StrictVersion("4.5.0")):
         Qt.QApplication.setGraphicsSystem(gr.prefs().get_string('qtgui','style','raster'))
     qapp = Qt.QApplication(sys.argv)
-    tb = tmsi_print_qt(gain=options.gain, ppm=options.ppm, samp_rate=options.samp_rate, shiftoff=options.shiftoff, fc=options.fc)
+    tb = tmsi_print(gain=options.gain, ppm=options.ppm, samp_rate=options.samp_rate, shiftoff=options.shiftoff, fc=options.fc)
     tb.start()
     tb.show()
     def quitting():
