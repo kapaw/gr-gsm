@@ -36,7 +36,7 @@ class tmsi_print_nogui(gr.top_block):
         ##################################################
         # Blocks
         ##################################################
-        self.rtlsdr_source_0 = osmosdr.source( args="numchan=" + str(1) + " " + device )
+        self.rtlsdr_source_0 = osmosdr.source( args="numchan=" + str(1) + " " + self.device )
         self.rtlsdr_source_0.set_sample_rate(samp_rate)
         self.rtlsdr_source_0.set_center_freq(fc-shiftoff, 0)
         self.rtlsdr_source_0.set_freq_corr(ppm, 0)
