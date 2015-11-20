@@ -36,7 +36,6 @@ namespace gsm {
 void tmsi_printer_impl::dump_tmsi(pmt::pmt_t msg)
 {
     time_t t = time(0);
-    tm *now = localtime(&t);
 
     pmt::pmt_t message_plus_header_blob = pmt::cdr(msg);
     uint8_t * message_plus_header = (uint8_t *)pmt::blob_data(message_plus_header_blob);
@@ -51,6 +50,7 @@ void tmsi_printer_impl::dump_tmsi(pmt::pmt_t msg)
             (msg_type==0x21 || msg_type==0x22 || msg_type==0x24) //types corresponding to paging requests
       )
     {
+        bool outputted = 0;
         //write timestamp
         switch(msg_type) {
         case 0x21: //Paging Request Type 1
@@ -60,22 +60,18 @@ void tmsi_printer_impl::dump_tmsi(pmt::pmt_t msg)
             bool found_id_element = false;
 
             if(mobile_identity_type == 0x04) //identity type: TMSI
-            {
+            {   
+                outputted = 1;
                 write_tmsi(m+6);
                 std::cout << "-";
-                write_timestamp(now);
-                std::cout << "-0";
-                std::cout << std::endl;
 
                 next_element_index = 10;
                 found_id_element = true;
             } else if(mobile_identity_type == 0x01) //identity type: IMSI
             {
-                std::cout << "0-";
-                write_timestamp(now);
-                std::cout << "-";
+                outputted = 1;
                 write_imsi(m+5);
-                std::cout << std::endl;
+                std::cout << "-";
 
                 next_element_index = 13;
                 found_id_element = true;
@@ -91,19 +87,13 @@ void tmsi_printer_impl::dump_tmsi(pmt::pmt_t msg)
                     mobile_identity_type = m[next_element_index+2] & 0x07;
 
                     if(mobile_identity_type == 0x04) //identity type: TMSI
-                    {
+                    {   
+                        outputted = 1;
                         write_tmsi(m+next_element_index+3); //write starting from position of the TMSI in the message
-                        std::cout << "-";
-                        write_timestamp(now);
-                        std::cout << "-0";
-                        std::cout << std::endl;
                     } else if(mobile_identity_type == 0x01) //identity type: IMSI
                     {
-                        std::cout << "0-";
-                        write_timestamp(now);
-                        std::cout << "-";
+                        outputted = 1;
                         write_imsi(m+next_element_index+2); //write starting from position of the IMSI in the message
-                        std::cout << std::endl;
                     }
                 }
                 int ii;
@@ -116,32 +106,17 @@ void tmsi_printer_impl::dump_tmsi(pmt::pmt_t msg)
 
             write_tmsi(m+4);//1st tmsi location
             std::cout << "-";
-            write_timestamp(now);
-            std::cout << "-0";
-            std::cout << std::endl;
 
             write_tmsi(m+8);//2nd tmsi location
             std::cout << "-";
-            write_timestamp(now);
-            std::cout << "-0";
-            std::cout << std::endl;
 
             if(mobile_identity_type == 0x04) //identity type: TMSI
             {
                 write_tmsi(m+15);
-                std::cout << "-";
-                write_timestamp(now);
-                std::cout << "-0";
-                std::cout << std::endl;
 
             } else if(mobile_identity_type == 0x01) //identity type: IMSI
             {
-                std::cout << "0-";
-                write_timestamp(now);
-                std::cout << "-";
                 write_imsi(m+14);
-                std::cout << std::endl;
-
             }
         }
         break;
@@ -153,14 +128,13 @@ void tmsi_printer_impl::dump_tmsi(pmt::pmt_t msg)
             {
                 write_tmsi(m+TMSI_INDEX[x]);
                 std::cout << "-";
-                write_timestamp(now);
-                std::cout << "-0";
-                std::cout << std::endl;
             }
 
         }
         break;
         }
+        if(outputted)
+            std::cout << std::endl;
     }
 }
 
@@ -194,7 +168,7 @@ void tmsi_printer_impl::write_imsi(uint8_t * imsi)
 
 void tmsi_printer_impl::write_tmsi(uint8_t * tmsi)
 {
-    std::cout << boost::format("%02x%02x%02x%02x")
+    std::cout << "0x" << boost::format("%02x%02x%02x%02x")
               % (int)tmsi[0] % (int)tmsi[1] % (int)tmsi[2] % (int)tmsi[3];
     return;
 }
