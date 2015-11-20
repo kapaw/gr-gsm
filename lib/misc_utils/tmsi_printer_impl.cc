@@ -63,7 +63,6 @@ void tmsi_printer_impl::dump_tmsi(pmt::pmt_t msg)
             {   
                 outputted = 1;
                 write_tmsi(m+6);
-                std::cout << "-";
 
                 next_element_index = 10;
                 found_id_element = true;
@@ -71,7 +70,6 @@ void tmsi_printer_impl::dump_tmsi(pmt::pmt_t msg)
             {
                 outputted = 1;
                 write_imsi(m+5);
-                std::cout << "-";
 
                 next_element_index = 13;
                 found_id_element = true;
@@ -89,10 +87,12 @@ void tmsi_printer_impl::dump_tmsi(pmt::pmt_t msg)
                     if(mobile_identity_type == 0x04) //identity type: TMSI
                     {   
                         outputted = 1;
+                        std::cout << "-";
                         write_tmsi(m+next_element_index+3); //write starting from position of the TMSI in the message
                     } else if(mobile_identity_type == 0x01) //identity type: IMSI
                     {
                         outputted = 1;
+                        std::cout << "-";
                         write_imsi(m+next_element_index+2); //write starting from position of the IMSI in the message
                     }
                 }
@@ -105,17 +105,18 @@ void tmsi_printer_impl::dump_tmsi(pmt::pmt_t msg)
             uint8_t mobile_identity_type = m[14] & 0x07;
 
             write_tmsi(m+4);//1st tmsi location
-            std::cout << "-";
 
-            write_tmsi(m+8);//2nd tmsi location
             std::cout << "-";
+            write_tmsi(m+8);//2nd tmsi location
 
             if(mobile_identity_type == 0x04) //identity type: TMSI
             {
+                std::cout << "-";
                 write_tmsi(m+15);
 
             } else if(mobile_identity_type == 0x01) //identity type: IMSI
             {
+                std::cout << "-";
                 write_imsi(m+14);
             }
         }
@@ -126,8 +127,8 @@ void tmsi_printer_impl::dump_tmsi(pmt::pmt_t msg)
 
             for(int x =0; x < 4; x++)
             {
-                write_tmsi(m+TMSI_INDEX[x]);
                 std::cout << "-";
+                write_tmsi(m+TMSI_INDEX[x]);
             }
 
         }
