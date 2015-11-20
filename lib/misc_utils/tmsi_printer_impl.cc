@@ -104,6 +104,7 @@ void tmsi_printer_impl::dump_tmsi(pmt::pmt_t msg)
         {
             uint8_t mobile_identity_type = m[14] & 0x07;
 
+            outputted = 1;
             write_tmsi(m+4);//1st tmsi location
 
             std::cout << "-";
