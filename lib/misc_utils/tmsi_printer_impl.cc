@@ -128,7 +128,9 @@ void tmsi_printer_impl::dump_tmsi(pmt::pmt_t msg)
 
             for(int x =0; x < 4; x++)
             {
-                std::cout << "-";
+                outputted = 1;
+                if(x != 0)
+                    std::cout << "-";
                 write_tmsi(m+TMSI_INDEX[x]);
             }
 
