@@ -10,18 +10,20 @@ from gnuradio import blocks
 from gnuradio import filter
 from gnuradio import gr
 from gnuradio.filter import firdes
+from distutils.version import LooseVersion as version
 import grgsm
 import math
 
-class clock_offset_corrector(gr.hier_block2):
+class clock_offset_corrector(grgsm.hier_block):
 
     def __init__(self, fc=936.6e6, ppm=0, samp_rate_in=1625000.0/6.0*4.0):
-        gr.hier_block2.__init__(
+        grgsm.hier_block.__init__(
             self, "Clock offset corrector",
             gr.io_signature(1, 1, gr.sizeof_gr_complex*1),
             gr.io_signature(1, 1, gr.sizeof_gr_complex*1),
         )
-
+        self.message_port_register_hier_in("ppm_in")
+        
         ##################################################
         # Parameters
         ##################################################
@@ -37,7 +39,6 @@ class clock_offset_corrector(gr.hier_block2):
         ##################################################
         # Blocks
         ##################################################
-        self.ppm_in = None;self.message_port_register_hier_out("ppm_in")
         self.gsm_controlled_rotator_cc_0 = grgsm.controlled_rotator_cc(0,samp_rate_out)
         self.gsm_controlled_const_source_f_0 = grgsm.controlled_const_source_f(ppm)
         self.fractional_resampler_xx_0 = filter.fractional_resampler_cc(0, samp_rate_in/samp_rate_out)

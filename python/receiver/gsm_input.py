@@ -10,12 +10,13 @@
 from gnuradio import filter
 from gnuradio import gr
 from gnuradio.filter import firdes
+from distutils.version import LooseVersion as version
 import grgsm
 
-class gsm_input(gr.hier_block2):
+class gsm_input(grgsm.hier_block):
 
     def __init__(self, ppm=0, osr=4, fc=940e6, samp_rate_in=1e6):
-        gr.hier_block2.__init__(
+        grgsm.hier_block.__init__(
             self, "GSM input adaptor",
             gr.io_signature(1, 1, gr.sizeof_gr_complex*1),
             gr.io_signature(1, 1, gr.sizeof_gr_complex*1),
@@ -37,7 +38,8 @@ class gsm_input(gr.hier_block2):
         ##################################################
         # Blocks
         ##################################################
-        self.ppm_in = None;self.message_port_register_hier_out("ppm_in")
+        self.message_port_register_hier_in("ppm_in")
+
         self.low_pass_filter_0_0 = filter.fir_filter_ccf(1, firdes.low_pass(
         	1, samp_rate_out, 125e3, 5e3, firdes.WIN_HAMMING, 6.76))
         self.gsm_clock_offset_corrector_0 = grgsm.clock_offset_corrector(
